@@ -1,0 +1,56 @@
+homeassistant:
+  name: Home
+  unit_system: metric
+  time_zone: Europe/Madrid
+  customize: !include customize.yaml
+
+automation: !include automations.yaml
+# binary_sensor: !include binary_sensors.yaml
+
+virtual:
+
+binary_sensor:
+  - platform: virtual
+    name: 'living_room_ms'
+    class: occupancy
+  - platform: virtual
+    name: 'bedroom_ms'
+    class: occupancy
+  - platform: virtual
+    name: 'garage_ms'
+    class: occupancy
+
+light:
+  - platform: virtual
+    name: 'living_room_b'
+    initial_value: 'off'
+  - platform: virtual
+    name: 'kitchen_b'
+    initial_value: 'off'
+  - platform: virtual
+    name: 'garage_b'
+    initial_value: 'off'
+  - platform: virtual
+    name: 'daylight'
+    initial_value: 'on'
+
+
+group:
+  living-room:
+    name: Living Room
+    entities:
+      - binary_sensor.virtual_living_room_ms
+      - light.virtual_living_room_b
+  bedroom:
+    name: Bedroom
+    entities:
+      - binary_sensor.virtual_bedroom_ms
+  kitchen:
+    name: Kitchen
+    entities:
+      - light.virtual_kitchen_b
+  garage:
+    name: Garage
+    entities:
+      - binary_sensor.virtual_garage_ms
+      - light.virtual_garage_b
