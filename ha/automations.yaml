@@ -9,9 +9,27 @@
 
 - trigger:
   - platform: state
+    entity_id: switch.virtual_presence
+    to: 'off'
+  action:
+  - service: virtual.turn_off
+    target:
+      entity_id: binary_sensor.virtual_is_occupied
+
+- trigger:
+  - platform: state
     entity_id: binary_sensor.virtual_is_occupied
     to: 'on'
   action:
   - service: light.turn_on
+    target:
+      entity_id: light.virtual_lamp
+
+- trigger:
+  - platform: state
+    entity_id: binary_sensor.virtual_is_occupied
+    to: 'off'
+  action:
+  - service: light.turn_off
     target:
       entity_id: light.virtual_lamp
