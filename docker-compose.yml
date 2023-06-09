@@ -9,9 +9,9 @@ services:
   homeassistant:
     container_name: aria-ha
     image: "ghcr.io/home-assistant/home-assistant:stable"
-    privileged: true
-    network_mode: host
     volumes:
       - ./ha:/config
-    # ports:
-    #   - "8123:8123"
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
