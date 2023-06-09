@@ -14,15 +14,19 @@ light:
 
 binary_sensor:
   - platform: virtual
-    name: occupied
+    name: Is occupied
+    class: occupancy
     initial_value: 'off'
+    initial_availability: True
 
 group:
   living-room:
     name: Living Room
     entities:
+      # Devices
       - switch.virtual_presence
       - light.virtual_lamp
-      - binary_sensor.virtual_occupied
+      # Attributes
+      - binary_sensor.virtual_is_occupied
 
 automation: !include automations.yaml
