@@ -1,8 +1,4 @@
-homeassistant:
-  name: Home
-  unit_system: metric
-  time_zone: Europe/Madrid
-  customize: !include customize.yaml
+default_config:
 
 automation: !include automations.yaml
 binary_sensor: !include binary_sensors.yaml
