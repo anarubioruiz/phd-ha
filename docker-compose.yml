@@ -1,10 +1,17 @@
 version: '3'
 services:
+  mosquitto:
+    container_name: aria-mqtt
+    image: eclipse-mosquitto
+    expose:
+      - "1883"
+
   homeassistant:
-    container_name: homeassistant
+    container_name: aria-ha
     image: "ghcr.io/home-assistant/home-assistant:stable"
-    volumes:
-      - ./ha:/config
-    restart: unless-stopped
     privileged: true
     network_mode: host
+    volumes:
+      - ./ha:/config
+    # ports:
+    #   - "8123:8123"
