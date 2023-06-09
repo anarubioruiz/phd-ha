@@ -1,4 +1,4 @@
 #!/usr/bin/make -f
 
 docker-up:
-	docker compose up
+	docker-compose up
