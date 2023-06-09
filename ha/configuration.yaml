@@ -1,4 +1,28 @@
 default_config:
 
+virtual:
+
+switch:
+  - platform: virtual
+    name: Presence
+    initial_value: 'off'
+
+light:
+  - platform: virtual
+    name: Lamp
+    initial_value: 'off'
+
+binary_sensor:
+  - platform: virtual
+    name: occupied
+    initial_value: 'off'
+
+group:
+  living-room:
+    name: Living Room
+    entities:
+      - switch.virtual_presence
+      - light.virtual_lamp
+      - binary_sensor.virtual_occupied
+
 automation: !include automations.yaml
-binary_sensor: !include binary_sensors.yaml

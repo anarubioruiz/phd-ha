@@ -1,0 +1,14 @@
+- trigger:
+  - platform: state
+    entity_id: switch.virtual_presence
+    to: 'on'
+  action:
+  - event: living_room_occupied
+
+- trigger:
+  - platform: event
+    event_type: living_room_occupied
+  action:
+  - service: binary_sensor.turn_on
+    target:
+      entity_id: binary_sensor.virtual_occupied
