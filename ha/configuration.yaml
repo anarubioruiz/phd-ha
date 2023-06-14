@@ -7,17 +7,14 @@ switch:
     name: Occupancy
     initial_value: 'off'
 
-light:
+cover:
   - platform: virtual
-    name: Lamp
-    initial_value: 'off'
+    name: Cover
 
 binary_sensor:
   - platform: virtual
     name: Is occupied
     class: occupancy
-    initial_value: 'off'
-    initial_availability: True
 
 group:
   living-room:
@@ -25,7 +22,7 @@ group:
     entities:
       # Devices
       - switch.virtual_occupancy
-      - light.virtual_lamp
+      - cover.virtual_cover
       # Attributes
       - binary_sensor.virtual_is_occupied
 

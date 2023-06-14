@@ -6,7 +6,7 @@
     entity_id: switch.virtual_occupancy
     to: 'off'
   action:
-  - service: input_boolean.turn_{{ trigger.to_state.state }}
+  - service: virtual.turn_{{ trigger.to_state.state }}
     target:
       entity_id: binary_sensor.virtual_is_occupied
 
@@ -15,15 +15,15 @@
     entity_id: binary_sensor.virtual_is_occupied
     to: 'on'
   action:
-  - service: light.turn_on
+  - service: cover.open_cover
     target:
-      entity_id: light.virtual_lamp
+      entity_id: cover.virtual_cover
 
 - trigger:
   - platform: state
     entity_id: binary_sensor.virtual_is_occupied
     to: 'off'
   action:
-  - service: light.turn_off
+  - service: cover.close_cover
     target:
-      entity_id: light.virtual_lamp
+      entity_id: cover.virtual_cover
