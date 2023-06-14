@@ -1,18 +1,12 @@
 - trigger:
   - platform: state
-    entity_id: switch.virtual_presence
+    entity_id: switch.virtual_occupancy
     to: 'on'
-  action:
-  - service: virtual.turn_on
-    target:
-      entity_id: binary_sensor.virtual_is_occupied
-
-- trigger:
   - platform: state
-    entity_id: switch.virtual_presence
+    entity_id: switch.virtual_occupancy
     to: 'off'
   action:
-  - service: virtual.turn_off
+  - service: input_boolean.turn_{{ trigger.to_state.state }}
     target:
       entity_id: binary_sensor.virtual_is_occupied
 

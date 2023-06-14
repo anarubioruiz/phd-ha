@@ -4,7 +4,7 @@ virtual:
 
 switch:
   - platform: virtual
-    name: Presence
+    name: Occupancy
     initial_value: 'off'
 
 light:
@@ -24,7 +24,7 @@ group:
     name: Living Room
     entities:
       # Devices
-      - switch.virtual_presence
+      - switch.virtual_occupancy
       - light.virtual_lamp
       # Attributes
       - binary_sensor.virtual_is_occupied
