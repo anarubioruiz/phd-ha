@@ -1,29 +1,117 @@
 - trigger:
   - platform: state
-    entity_id: switch.occupancy_button
+    entity_id: switch.desk_occupancy_button
     to: 'on'
   - platform: state
-    entity_id: switch.occupancy_button
+    entity_id: switch.desk_occupancy_button
     to: 'off'
   action:
   - service: virtual.turn_{{ trigger.to_state.state }}
     target:
-      entity_id: binary_sensor.occupancy
-
+      entity_id: binary_sensor.deskoccupancysensor23
 - trigger:
   - platform: state
-    entity_id: binary_sensor.occupancy
+    entity_id: switch.meetings_occupancy_button
     to: 'on'
-  action:
-  - service: cover.open_cover
-    target:
-      entity_id: cover.my_cover
-
-- trigger:
   - platform: state
-    entity_id: binary_sensor.occupancy
+    entity_id: switch.meetings_occupancy_button
     to: 'off'
   action:
-  - service: cover.close_cover
+  - service: virtual.turn_{{ trigger.to_state.state }}
     target:
-      entity_id: cover.my_cover
+      entity_id: binary_sensor.meetingsoccupancysensor23
+
+- alias: "Turn on dektop lamp in office 23 when occupancy detected during night hours"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.deskoccupancysensor23
+    to: "on"
+  condition:
+      condition: sun
+      after: sunset
+      before: sunrise
+  action:
+    service: light.turn_on
+    entity_id: light.desklight23
+- alias: "Turn off desktop lamp in office 23 when no occupancy detected"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.deskoccupancysensor23
+    to: "off"
+  action:
+    service: light.turn_off
+    entity_id: light.desklight23
+- alias: "Open desktop blinds in office 23 when occupancy detected during daylight hours"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.deskoccupancysensor23
+    to: "on"
+  condition:
+      condition: sun
+      after: sunrise
+      before: sunset
+  action:
+    service: cover.open_cover
+    entity_id: cover.deskblinds23
+- alias: "Turn on meetings lamp in office 23 when occupancy detected during night hours"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.meetingsoccupancysensor23
+    to: "on"
+  condition:
+      condition: sun
+      after: sunset
+      before: sunrise
+  action:
+    service: light.turn_on
+    entity_id: light.meetingslight23
+- alias: "Turn off meetings lamp in office 23 when no occupancy detected"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.meetingsoccupancysensor23
+    to: "off"
+  action:
+    service: light.turn_off
+    entity_id: light.meetingslight23
+- alias: "Open meetings blinds in office 23 when occupancy detected during daylight hours"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.meetingsoccupancysensor23
+    to: "on"
+  condition:
+      condition: sun
+      after: sunrise
+      before: sunset
+  action:
+    service: cover.open_cover
+    entity_id: cover.meetingsblinds23
+
+# - trigger:
+#   - platform: state
+#     entity_id: switch.occupancy_button
+#     to: 'on'
+#   - platform: state
+#     entity_id: switch.occupancy_button
+#     to: 'off'
+#   action:
+#   - service: virtual.turn_{{ trigger.to_state.state }}
+#     target:
+#       entity_id: binary_sensor.occupancy
+
+# - trigger:
+#   - platform: state
+#     entity_id: binary_sensor.occupancy
+#     to: 'on'
+#   action:
+#   - service: cover.open_cover
+#     target:
+#       entity_id: cover.my_cover
+
+# - trigger:
+#   - platform: state
+#     entity_id: binary_sensor.occupancy
+#     to: 'off'
+#   action:
+#   - service: cover.close_cover
+#     target:
+#       entity_id: cover.my_cover

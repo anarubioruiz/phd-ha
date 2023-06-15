@@ -4,26 +4,67 @@ virtual:
 
 switch:
   - platform: virtual
-    name: '!occupancy button'
+    name: '!desk_occupancy_button'
     initial_value: 'off'
-
-cover:
   - platform: virtual
-    name: '!my cover'
+    name: '!meetings_occupancy_button'
+    initial_value: 'off'
 
 binary_sensor:
   - platform: virtual
-    name: '!occupancy'
+    name: "!deskoccupancysensor23"
+    class: occupancy
+  - platform: virtual
+    name: "!meetingsoccupancysensor23"
     class: occupancy
 
+light:
+  - platform: virtual
+    name: "!desklight23"
+  - platform: virtual
+    name: "!meetingslight23"
+
+cover:
+  - platform: virtual
+    name: "!deskblinds23"
+  - platform: virtual
+    name: "!meetingsblinds23"
+
 group:
-  living-room:
-    name: Living Room
+  office23:
+    name: Office 23
     entities:
-      # Devices
-      - switch.occupancy_button
-      - cover.my_cover
-      # Attributes
-      - binary_sensor.occupancy
+      - light.desklight23
+      - light.meetingslight23
+      - cover.deskblinds23
+      - cover.meetingsblinds23
+      - binary_sensor.deskoccupancysensor23
+      - binary_sensor.meetingsoccupancysensor23
+
+
+
+# switch:
+#   - platform: virtual
+#     name: '!occupancy button'
+#     initial_value: 'off'
+
+# cover:
+#   - platform: virtual
+#     name: '!my cover'
+
+# binary_sensor:
+#   - platform: virtual
+#     name: '!occupancy'
+#     class: occupancy
+
+# group:
+#   living-room:
+#     name: Living Room
+#     entities:
+#       # Devices
+#       - switch.occupancy_button
+#       - cover.my_cover
+#       # Attributes
+#       - binary_sensor.occupancy
 
 automation: !include automations.yaml
