@@ -1,90 +1,85 @@
 - trigger:
   - platform: state
-    entity_id: switch.desk_occupancy_button
+    entity_id: switch.occupancy_button
     to: 'on'
   - platform: state
-    entity_id: switch.desk_occupancy_button
+    entity_id: switch.occupancy_button
     to: 'off'
   action:
   - service: virtual.turn_{{ trigger.to_state.state }}
     target:
-      entity_id: binary_sensor.deskoccupancysensor23
-- trigger:
-  - platform: state
-    entity_id: switch.meetings_occupancy_button
-    to: 'on'
-  - platform: state
-    entity_id: switch.meetings_occupancy_button
-    to: 'off'
-  action:
-  - service: virtual.turn_{{ trigger.to_state.state }}
-    target:
-      entity_id: binary_sensor.meetingsoccupancysensor23
+      entity_id: binary_sensor.oc1
 
-- alias: "Turn on dektop lamp in office 23 when occupancy detected during night hours"
+- alias: "Energy Saving Automation"
+  description: "This automation controls light and cover based on occupancy and daylight"
   trigger:
-    platform: state
-    entity_id: binary_sensor.deskoccupancysensor23
-    to: "on"
-  condition:
-      condition: sun
-      after: sunset
-      before: sunrise
+    - platform: state
+      entity_id: binary_sensor.oc1
+      from: "off"
+      to: "on"
+    - platform: state
+      entity_id: binary_sensor.oc1
+      from: "on"
+      to: "off"
+      for:
+        minutes: 5
+    - platform: sun
+      event: sunrise
+    - platform: sun
+      event: sunset
+
   action:
-    service: light.turn_on
-    entity_id: light.desklight23
-- alias: "Turn off desktop lamp in office 23 when no occupancy detected"
-  trigger:
-    platform: state
-    entity_id: binary_sensor.deskoccupancysensor23
-    to: "off"
-  action:
-    service: light.turn_off
-    entity_id: light.desklight23
-- alias: "Open desktop blinds in office 23 when occupancy detected during daylight hours"
-  trigger:
-    platform: state
-    entity_id: binary_sensor.deskoccupancysensor23
-    to: "on"
-  condition:
-      condition: sun
-      after: sunrise
-      before: sunset
-  action:
-    service: cover.open_cover
-    entity_id: cover.deskblinds23
-- alias: "Turn on meetings lamp in office 23 when occupancy detected during night hours"
-  trigger:
-    platform: state
-    entity_id: binary_sensor.meetingsoccupancysensor23
-    to: "on"
-  condition:
-      condition: sun
-      after: sunset
-      before: sunrise
-  action:
-    service: light.turn_on
-    entity_id: light.meetingslight23
-- alias: "Turn off meetings lamp in office 23 when no occupancy detected"
-  trigger:
-    platform: state
-    entity_id: binary_sensor.meetingsoccupancysensor23
-    to: "off"
-  action:
-    service: light.turn_off
-    entity_id: light.meetingslight23
-- alias: "Open meetings blinds in office 23 when occupancy detected during daylight hours"
-  trigger:
-    platform: state
-    entity_id: binary_sensor.meetingsoccupancysensor23
-    to: "on"
-  condition:
-      condition: sun
-      after: sunrise
-      before: sunset
-  action:
-    service: cover.open_cover
-    entity_id: cover.meetingsblinds23
+    - choose:
+        # if occupancy is detected, open cover, turn on light if it's dark outside
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.oc1
+              state: "on"
+          sequence:
+            - condition: state
+              entity_id: sun.sun
+              state: "below_horizon"
+            - service: light.turn_on
+              entity_id: light.light1
+            - service: cover.open_cover
+              entity_id: cover.cover1
+        # if no occupancy is detected for 5 minutes, close cover and turn off light
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.oc1
+              state: "off"
+          sequence:
+            - service: light.turn_off
+              entity_id: light.light1
+            - service: cover.close_cover
+              entity_id: cover.cover1
+      default:
+        # At sunrise, if no occupancy, make sure light is off and cover is closed
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.oc1
+              state: "off"
+            - condition: state
+              entity_id: sun.sun
+              state: "above_horizon"
+          sequence:
+            - service: light.turn_off
+              entity_id: light.light1
+            - service: cover.close_cover
+              entity_id: cover.cover1
+        # At sunset, if there is occupancy, turn on light
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.oc1
+              state: "on"
+            - condition: state
+              entity_id: sun.sun
+              state: "below_horizon"
+          sequence:
+            - service: light.turn_on
+              entity_id: light.light1
+
+
 
 # - trigger:
 #   - platform: state

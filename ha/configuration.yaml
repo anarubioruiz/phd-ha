@@ -4,42 +4,29 @@ virtual:
 
 switch:
   - platform: virtual
-    name: '!desk_occupancy_button'
-    initial_value: 'off'
-  - platform: virtual
-    name: '!meetings_occupancy_button'
+    name: '!occupancy_button'
     initial_value: 'off'
 
 binary_sensor:
   - platform: virtual
-    name: "!deskoccupancysensor23"
-    class: occupancy
-  - platform: virtual
-    name: "!meetingsoccupancysensor23"
+    name: "!oc1"
     class: occupancy
 
 light:
   - platform: virtual
-    name: "!desklight23"
-  - platform: virtual
-    name: "!meetingslight23"
+    name: "!light1"
 
 cover:
   - platform: virtual
-    name: "!deskblinds23"
-  - platform: virtual
-    name: "!meetingsblinds23"
+    name: "!cover1"
 
 group:
   office23:
-    name: Office 23
+    name: chatGPT
     entities:
-      - light.desklight23
-      - light.meetingslight23
-      - cover.deskblinds23
-      - cover.meetingsblinds23
-      - binary_sensor.deskoccupancysensor23
-      - binary_sensor.meetingsoccupancysensor23
+      - light.light1
+      - cover.cover1
+      - binary_sensor.0c1
 
 
 
