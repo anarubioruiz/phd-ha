@@ -4,16 +4,16 @@ virtual:
 
 switch:
   - platform: virtual
-    name: Occupancy
+    name: '!occupancy button'
     initial_value: 'off'
 
 cover:
   - platform: virtual
-    name: Cover
+    name: '!my cover'
 
 binary_sensor:
   - platform: virtual
-    name: Is occupied
+    name: '!occupancy'
     class: occupancy
 
 group:
@@ -21,9 +21,9 @@ group:
     name: Living Room
     entities:
       # Devices
-      - switch.virtual_occupancy
-      - cover.virtual_cover
+      - switch.occupancy_button
+      - cover.my_cover
       # Attributes
-      - binary_sensor.virtual_is_occupied
+      - binary_sensor.occupancy
 
 automation: !include automations.yaml

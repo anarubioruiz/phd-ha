@@ -1,29 +1,29 @@
 - trigger:
   - platform: state
-    entity_id: switch.virtual_occupancy
+    entity_id: switch.occupancy_button
     to: 'on'
   - platform: state
-    entity_id: switch.virtual_occupancy
+    entity_id: switch.occupancy_button
     to: 'off'
   action:
   - service: virtual.turn_{{ trigger.to_state.state }}
     target:
-      entity_id: binary_sensor.virtual_is_occupied
+      entity_id: binary_sensor.occupancy
 
 - trigger:
   - platform: state
-    entity_id: binary_sensor.virtual_is_occupied
+    entity_id: binary_sensor.occupancy
     to: 'on'
   action:
   - service: cover.open_cover
     target:
-      entity_id: cover.virtual_cover
+      entity_id: cover.my_cover
 
 - trigger:
   - platform: state
-    entity_id: binary_sensor.virtual_is_occupied
+    entity_id: binary_sensor.occupancy
     to: 'off'
   action:
   - service: cover.close_cover
     target:
-      entity_id: cover.virtual_cover
+      entity_id: cover.my_cover
