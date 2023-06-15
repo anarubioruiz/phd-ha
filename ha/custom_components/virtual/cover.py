@@ -6,6 +6,7 @@ This component provides support for a virtual cover.
 import logging
 import voluptuous as vol
 from typing import Any
+import time
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.cover import CoverEntity, DOMAIN
@@ -68,8 +69,10 @@ class VirtualCover(VirtualEntity, CoverEntity):
 
     def open_cover(self, **kwargs: Any) -> None:
         _LOGGER.info(f'opening {self.name}')
+        time.sleep(3)
         self._attr_is_closed = False
 
     def close_cover(self, **kwargs: Any) -> None:
         _LOGGER.info(f'closing {self.name}')
+        time.sleep(3)
         self._attr_is_closed = True
