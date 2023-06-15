@@ -1,0 +1,90 @@
+default_config:
+
+virtual:
+
+switch:
+  - platform: virtual
+    name: '!occupancy_button'
+    initial_value: 'off'
+  - platform: virtual
+    name: '!more_than_100lx'
+    initial_value: 'off'
+
+binary_sensor:
+  - platform: virtual
+    name: "!os12"
+    class: occupancy
+
+light:
+  - platform: virtual
+    name: "!l12"
+
+sensor:
+  - platform: virtual
+    name: "!ls12"
+    class: illuminance
+    initial_value: 90
+
+group:
+  as12:
+    name: AS12
+    entities:
+      - light.l12
+      - binary_sensor.os12
+      - sensor.ls12
+
+automation:
+- trigger:
+  - platform: state
+    entity_id: switch.occupancy_button
+    to: 'on'
+  - platform: state
+    entity_id: switch.occupancy_button
+    to: 'off'
+  action:
+  - service: virtual.turn_{{ trigger.to_state.state }}
+    target:
+      entity_id: binary_sensor.os12
+
+- trigger:
+  - platform: state
+    entity_id: switch.more_than_100lx
+    to: 'on'
+  action:
+  - service: virtual.set
+    target:
+      entity_id: sensor.ls12
+    data:
+      value: 150
+
+- trigger:
+  - platform: state
+    entity_id: switch.more_than_100lx
+    to: 'off'
+  action:
+  - service: virtual.set
+    target:
+      entity_id: sensor.ls12
+    data:
+      value: 50
+
+- alias: "Illuminate AS12 when light is needed and occupancy detected"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os12
+    to: "on"
+  condition:
+    condition: numeric_state
+    entity_id: sensor.ls12
+    below: 100
+  action:
+    service: light.turn_on
+    entity_id: light.l12
+- alias: "Turn off AS12 lights when no occupancy detected"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os12
+    to: "off"
+  action:
+    service: light.turn_off
+    entity_id: light.l12

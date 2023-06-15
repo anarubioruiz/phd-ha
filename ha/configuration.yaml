@@ -6,28 +6,128 @@ switch:
   - platform: virtual
     name: '!occupancy_button'
     initial_value: 'off'
+  - platform: virtual
+    name: '!more_than_100lx'
+    initial_value: 'off'
 
 binary_sensor:
   - platform: virtual
-    name: "!oc1"
+    name: "!os1"
     class: occupancy
 
 light:
   - platform: virtual
-    name: "!light1"
+    name: "!l1"
+
+sensor:
+  - platform: virtual
+    name: "!ls1"
+    class: illuminance
+    initial_value: 90
 
 cover:
   - platform: virtual
-    name: "!cover1"
+    name: "!wc1"
 
 group:
-  office23:
-    name: chatGPT
+  as12:
+    name: AS12
     entities:
-      - light.light1
-      - cover.cover1
-      - binary_sensor.0c1
+      - light.l1
+      - binary_sensor.os1
+      - sensor.ls1
+      - cover.wc1
 
+automation:
+- trigger:
+  - platform: state
+    entity_id: switch.occupancy_button
+    to: 'on'
+  - platform: state
+    entity_id: switch.occupancy_button
+    to: 'off'
+  action:
+  - service: virtual.turn_{{ trigger.to_state.state }}
+    target:
+      entity_id: binary_sensor.os1
+
+- trigger:
+  - platform: state
+    entity_id: switch.more_than_100lx
+    to: 'on'
+  action:
+  - service: virtual.set
+    target:
+      entity_id: sensor.ls1
+    data:
+      value: 160
+
+- trigger:
+  - platform: state
+    entity_id: switch.more_than_100lx
+    to: 'off'
+  action:
+  - service: virtual.set
+    target:
+      entity_id: sensor.ls1
+    data:
+      value: 50
+
+- alias: "Turn on the light when low light level and occupancy detected at night"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os1
+    to: "on"
+  condition:
+    condition: sun
+    after: sunset
+    before: sunrise
+  action:
+    service: light.turn_on
+    entity_id: light.l1
+- alias: "Open the window cover when occupancy detected and not enough light (dayhours)"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os1
+    to: "on"
+  condition:
+    and:
+    - condition: sun
+      after: sunrise
+      before: sunset
+    - condition: numeric_state
+      entity_id: sensor.ls1
+      below: 150
+  action:
+    service: cover.open_cover
+    entity_id: cover.wc1
+- alias: "Turn on the light when occupancy detected and light is needed although the cover is open (dayhours)"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os1
+    to: "on"
+  condition:
+    and:
+    - condition: sun
+      after: sunrise
+      before: sunset
+    - condition: numeric_state
+      entity_id: sensor.ls1
+      below: 100
+    - condition: state
+      entity_id: cover.wc1
+      state: "open"
+  action:
+    service: light.turn_on
+    entity_id: light.l1
+- alias: "Turn off R1 lights when no occupancy detected"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os1
+    to: "off"
+  action:
+    service: light.turn_off
+    entity_id: light.l1
 
 
 # switch:
@@ -54,4 +154,33 @@ group:
 #       # Attributes
 #       - binary_sensor.occupancy
 
-automation: !include automations.yaml
+# automation:
+# - trigger:
+#   - platform: state
+#     entity_id: switch.occupancy_button
+#     to: 'on'
+#   - platform: state
+#     entity_id: switch.occupancy_button
+#     to: 'off'
+#   action:
+#   - service: virtual.turn_{{ trigger.to_state.state }}
+#     target:
+#       entity_id: binary_sensor.occupancy
+
+# - trigger:
+#   - platform: state
+#     entity_id: binary_sensor.occupancy
+#     to: 'on'
+#   action:
+#   - service: cover.open_cover
+#     target:
+#       entity_id: cover.my_cover
+
+# - trigger:
+#   - platform: state
+#     entity_id: binary_sensor.occupancy
+#     to: 'off'
+#   action:
+#   - service: cover.close_cover
+#     target:
+#       entity_id: cover.my_cover
