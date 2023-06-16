@@ -69,13 +69,18 @@ automation:
 
 - alias: "Turn on dektop lamp in office 23 when occupancy detected during night hours"
   trigger:
-    platform: state
-    entity_id: binary_sensor.deskoccupancysensor23
-    to: "on"
+    - platform: state
+      entity_id: binary_sensor.deskoccupancysensor23
+      to: "on"
+    - platform: sun
+      event: sunset
   condition:
-      condition: sun
+    - condition: sun
       after: sunset
       before: sunrise
+    - condition: state
+      entity_id: binary_sensor.deskoccupancysensor23
+      state: "on"
   action:
     service: light.turn_on
     entity_id: light.desklight23
@@ -87,27 +92,37 @@ automation:
   action:
     service: light.turn_off
     entity_id: light.desklight23
-- alias: "Open desktop blinds in office 23 when occupancy detected during daylight hours"
+- alias: "Open desktop blinds in office 23 when occupancy detected during daylight hours (without turning off the lamp because this is a working area)"
   trigger:
-    platform: state
-    entity_id: binary_sensor.deskoccupancysensor23
-    to: "on"
+    - platform: state
+      entity_id: binary_sensor.deskoccupancysensor23
+      to: "on"
+    - platform: sun
+      event: sunrise
   condition:
-      condition: sun
+    - condition: sun
       after: sunrise
       before: sunset
+    - condition: state
+      entity_id: binary_sensor.deskoccupancysensor23
+      state: "on"
   action:
     service: cover.open_cover
     entity_id: cover.deskblinds23
 - alias: "Turn on meetings lamp in office 23 when occupancy detected during night hours"
   trigger:
-    platform: state
-    entity_id: binary_sensor.meetingsoccupancysensor23
-    to: "on"
+    - platform: state
+      entity_id: binary_sensor.meetingsoccupancysensor23
+      to: "on"
+    - platform: sun
+      event: sunset
   condition:
-      condition: sun
+    - condition: sun
       after: sunset
       before: sunrise
+    - condition: state
+      entity_id: binary_sensor.meetingsoccupancysensor23
+      state: "on"
   action:
     service: light.turn_on
     entity_id: light.meetingslight23
@@ -121,13 +136,20 @@ automation:
     entity_id: light.meetingslight23
 - alias: "Open meetings blinds in office 23 when occupancy detected during daylight hours"
   trigger:
-    platform: state
-    entity_id: binary_sensor.meetingsoccupancysensor23
-    to: "on"
+    - platform: state
+      entity_id: binary_sensor.meetingsoccupancysensor23
+      to: "on"
+    - platform: sun
+      event: sunrise
   condition:
-      condition: sun
+    - condition: sun
       after: sunrise
       before: sunset
+    - condition: state
+      entity_id: binary_sensor.meetingsoccupancysensor23
+      state: "on"
   action:
-    service: cover.open_cover
-    entity_id: cover.meetingsblinds23
+    - service: cover.open_cover
+      entity_id: cover.meetingsblinds23
+    - service: light.turn_off
+      entity_id: light.meetingslight23

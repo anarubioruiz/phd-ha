@@ -75,35 +75,51 @@ automation:
 
 - alias: "Turn on the light when low light level and occupancy detected at night"
   trigger:
-    platform: state
-    entity_id: binary_sensor.os1
-    to: "on"
+    - platform: state
+      entity_id: binary_sensor.os1
+      to: "on"
+    - platform: numeric_state
+      entity_id: sensor.ls1
+      below: 100
   condition:
+    - condition: state
+      entity_id: binary_sensor.os1
+      state: "on"
     - condition: sun
       after: sunset
       before: sunrise
     - condition: numeric_state
       entity_id: sensor.ls1
-      below: 150
+      below: 100
   action:
     service: light.turn_on
     entity_id: light.l1
-- alias: "Open the window cover when occupancy detected and not enough light (dayhours)"
+- alias: "Open the window cover and turn off the light when occupancy detected and not enough light (dayhours)"
   trigger:
-    platform: state
-    entity_id: binary_sensor.os1
-    to: "on"
+    - platform: state
+      entity_id: binary_sensor.os1
+      to: "on"
+    - platform: numeric_state
+      entity_id: sensor.ls1
+      below: 100
   condition:
-    and:
     - condition: sun
       after: sunrise
       before: sunset
     - condition: numeric_state
       entity_id: sensor.ls1
-      below: 150
+      below: 100
+    - condition: state
+      entity_id: binary_sensor.os1
+      state: "on"
+    - condition: state
+      entity_id: cover.wc1
+      state: "closed"
   action:
-    service: cover.open_cover
-    entity_id: cover.wc1
+    - service: cover.open_cover
+      entity_id: cover.wc1
+    - service: light.turn_off
+      entity_id: light.l1
 - alias: "Turn on the light when occupancy detected and light is needed although the cover is open (dayhours)"
   trigger:
     - platform: state
@@ -112,8 +128,10 @@ automation:
     - platform: state
       entity_id: binary_sensor.os1
       to: "on"
+    - platform: numeric_state
+      entity_id: sensor.ls1
+      below: 100
   condition:
-    and:
     - condition: sun
       after: sunrise
       before: sunset
@@ -129,11 +147,11 @@ automation:
   action:
     service: light.turn_on
     entity_id: light.l1
-- alias: "Turn off R1 lights when no occupancy detected"
+- alias: "Turn off R1 lights when no occupancy detected or light is not needed"
   trigger:
-    platform: state
-    entity_id: binary_sensor.os1
-    to: "off"
+    - platform: state
+      entity_id: binary_sensor.os1
+      to: "off"
   action:
     service: light.turn_off
     entity_id: light.l1
