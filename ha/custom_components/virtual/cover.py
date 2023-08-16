@@ -69,10 +69,10 @@ class VirtualCover(VirtualEntity, CoverEntity):
 
     def open_cover(self, **kwargs: Any) -> None:
         _LOGGER.info(f'opening {self.name}')
-        time.sleep(3)
+        time.sleep(2)
         self._attr_is_closed = False
 
     def close_cover(self, **kwargs: Any) -> None:
         _LOGGER.info(f'closing {self.name}')
-        time.sleep(3)
+        time.sleep(2)
         self._attr_is_closed = True
