@@ -1,0 +1,183 @@
+# LATI1.6 - ARIAGenerate(lighting, alternative_lighting)
+
+default_config:
+
+virtual:
+
+# Assets for testing
+
+switch:
+  - platform: virtual
+    name: '!os1_b'
+    initial_value: 'off'
+  - platform: virtual
+    name: '!os2_b'
+    initial_value: 'off'
+  - platform: virtual
+    name: '!kitchen_al_b'
+    initial_value: 'off'
+  - platform: virtual
+    name: '!living_room_al_b'
+    initial_value: 'off'
+
+# Devices:
+
+binary_sensor:
+  - platform: virtual
+    name: '!os1'
+    class: occupancy
+  - platform: virtual
+    name: '!os2'
+    class: occupancy
+  - platform: virtual
+    name: '!ds1'
+    class: door
+
+light:
+  - platform: virtual
+    name: "!sb1"
+  - platform: virtual
+    name: "!sb2"
+
+# Deployment:
+
+group:
+  living-room:
+    name: Living Room
+    entities:
+      # Assets for testing
+      - switch.os1_b
+      - switch.living_room_al
+      # Devices
+      - binary_sensor.os1
+      - binary_sensor.ds1
+      - light.sb1
+  kitchen:
+    name: Kitchen
+    entities:
+      # Assets for testing
+      - switch.os2_b
+      - switch.kitchen_al
+      # Devices
+      - binary_sensor.os2
+      - binary_sensor.ds1
+      - light.sb2
+
+# Rules:
+
+automation:
+- description: "Turn on living room light when occupancy detected"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os1
+    to: "on"
+  condition:
+    platform: state
+    entity_id: input_boolean.living_room_AL
+    state: "off"
+  action:
+    service: light.turn_on
+    entity_id: light.sb1
+- description: "Turn off living room light when no occupancy detected"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os1
+    to: "off"
+  condition:
+    platform: state
+    entity_id: input_boolean.living_room_AL
+    state: "off"
+  action:
+    service: light.turn_off
+    entity_id: light.sb1
+- description: "Turn on kitchen light when occupancy detected"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os2
+    to: "on"
+  condition:
+    platform: state
+    entity_id: input_boolean.kitchen_AL
+    state: "off"
+  action:
+    service: light.turn_on
+    entity_id: light.sb2
+- description: "Turn off kitchen light when no occupancy detected"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os2
+    to: "off"
+  condition:
+    platform: state
+    entity_id: input_boolean.kitchen_AL
+    state: "off"
+  action:
+    service: light.turn_off
+    entity_id: light.sb2
+
+- description: "Alternative lighting - turn on living room light when occupancy detected at kitchen and DS1 is open"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os2
+    to: "on"
+  condition:
+    - platform: state
+      entity_id: input_boolean.kitchen_AL
+      state: "on"
+    - platform: state
+      entity_id: binary_sensor.ds1
+      state: "on"
+  action:
+    service: light.turn_on
+    entity_id: light.sb1
+- description: "Alternative lighting - turn on kitchen light when occupancy detected at living room and DS1 is open"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os1
+    to: "on"
+  condition:
+    - platform: state
+      entity_id: input_boolean.living_room_AL
+      state: "on"
+    - platform: state
+      entity_id: binary_sensor.ds1
+      state: "on"
+  action:
+    service: light.turn_on
+    entity_id: light.sb2
+- description: "Alternative lighting - turn off living room light when no occupancy detected"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os2
+    to: "off"
+  condition:
+    - platform: state
+      entity_id: input_boolean.kitchen_AL
+      state: "on"
+    - platform: state
+      entity_id: binary_sensor.os1
+      state: "off"
+    - platform: state
+      entity_id: binary_sensor.os2
+      state: "off"
+  action:
+    service: light.turn_off
+    entity_id: light.sb1
+- description: "Alternative lighting - turn off kitchen light when no occupancy detected"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.os1
+    to: "off"
+  condition:
+    - platform: state
+      entity_id: input_boolean.living_room_AL
+      state: "on"
+    - platform: state
+      entity_id: binary_sensor.os1
+      state: "off"
+    - platform: state
+      entity_id: binary_sensor.os2
+      state: "off"
+  action:
+    service: light.turn_off
+    entity_id: light.sb2
