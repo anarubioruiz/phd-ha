@@ -1,0 +1,177 @@
+# LATI13.1 - ARIAGenerate(alternative_lighting)
+
+default_config:
+
+virtual:
+
+# Assets for testing
+
+switch:
+  - platform: virtual
+    name: '!living_area_occupancy_b'
+    initial_value: 'off'
+  - platform: virtual
+    name: '!dining_area_occupancy_b'
+    initial_value: 'off'
+
+# States:
+
+input_boolean:
+  living_area_al:
+    name: Living Area Alternative lighting
+    initial: 'off'
+    icon: mdi:lightbulb-alert
+  dining_area_al:
+    name: Dining Area Alternative lighting
+    initial: 'off'
+    icon: mdi:lightbulb-alert
+
+# Devices:
+
+binary_sensor:
+  - platform: virtual
+    name: '!living_area_occupancy'
+    class: occupancy
+  - platform: virtual
+    name: '!dining_area_occupancy'
+    class: occupancy
+
+cover:
+  - platform: virtual
+    name: '!living_area_blinds'
+
+light:
+  - platform: virtual
+    name: "!living_area_light"
+  - platform: virtual
+    name: "!dining_area_light"
+
+# Deployment:
+
+group:
+  living-area:
+    name: Living Area
+    entities:
+      - input_boolean.living_area_al
+      - binary_sensor.living_area_occupancy
+      - cover.living_area_blinds
+      - light.living_area_light
+  dining-area:
+    name: Dining Area
+    entities:
+      - input_boolean.dining_area_al
+      - binary_sensor.dining_area_occupancy
+      - light.dining_area_light
+
+automation:
+# Automations for testing
+- trigger:
+  - platform: state
+    entity_id: switch.living_area_occupancy_b
+    to: 'on'
+  - platform: state
+    entity_id: switch.living_area_occupancy_b
+    to: 'off'
+  action:
+  - service: virtual.turn_{{ trigger.to_state.state }}
+    target:
+      entity_id: binary_sensor.living_area_occupancy
+- trigger:
+  - platform: state
+    entity_id: switch.dining_area_occupancy_b
+    to: 'on'
+  - platform: state
+    entity_id: switch.dining_area_occupancy_b
+    to: 'off'
+  action:
+  - service: virtual.turn_{{ trigger.to_state.state }}
+    target:
+      entity_id: binary_sensor.dining_area_occupancy
+- trigger:
+  - platform: state
+    entity_id: switch.living_area_al
+    to: 'on'
+  action:
+    service: switch.turn_off
+    entity_id: switch.dining_area_al_b
+- trigger:
+  - platform: state
+    entity_id: switch.dining_area_al
+    to: 'on'
+  action:
+    service: switch.turn_off
+    entity_id: switch.living_area_al_b
+
+# Deployment automations
+- description: "Alternative lighting - at night, turn on living area light when occupancy detected at dining area"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.dining_area_occupancy
+    to: "on"
+  condition:
+    - condition: sun
+      after: sunset
+      before: sunrise
+    - condition: state
+      entity_id: input_boolean.dining_area_al
+      state: "on"
+  action:
+    service: light.turn_on
+    entity_id: light.living_area_light
+- description: "Alternative lighting - during the day, open living area blinds when occupancy detected at dining area"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.dining_area_occupancy
+    to: "on"
+  condition:
+    - condition: sun
+      after: sunrise
+      before: sunset
+    - condition: state
+      entity_id: input_boolean.dining_area_al
+      state: "on"
+  action:
+    service: cover.open_cover
+    entity_id: cover.living_area_blinds
+- description: "Alternative lighting - turn on dining area light when occupancy detected at living area"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.living_area_occupancy
+    to: "on"
+  condition:
+    condition: state
+    entity_id: input_boolean.living_area_al
+    state: "on"
+  action:
+    service: light.turn_on
+    entity_id: light.dining_area_light
+- description: "Alternative lighting - turn off living area light when no occupancy detected at dining area"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.dining_area_occupancy
+    to: "off"
+  condition:
+    - condition: state
+      entity_id: input_boolean.dining_area_al
+      state: "on"
+    - condition: state
+      entity_id: binary_sensor.living_area_occupancy
+      state: "off"
+  action:
+    service: light.turn_off
+    entity_id: light.living_area_light
+- description: "Alternative lighting - turn off dining area light when no occupancy detected at living area"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.living_area_occupancy
+    to: "off"
+  condition:
+    - condition: state
+      entity_id: input_boolean.living_area_al
+      state: "on"
+    - condition: state
+      entity_id: binary_sensor.dining_area_occupancy
+      state: "off"
+  action:
+    service: light.turn_off
+    entity_id: light.dining_area_light
