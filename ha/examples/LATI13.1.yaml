@@ -89,18 +89,18 @@ automation:
       entity_id: binary_sensor.dining_area_occupancy
 - trigger:
   - platform: state
-    entity_id: switch.living_area_al
+    entity_id: input_boolean.living_area_al
     to: 'on'
   action:
-    service: switch.turn_off
-    entity_id: switch.dining_area_al_b
+    service: input_boolean.turn_off
+    entity_id: input_boolean.dining_area_al
 - trigger:
   - platform: state
-    entity_id: switch.dining_area_al
+    entity_id: input_boolean.dining_area_al
     to: 'on'
   action:
-    service: switch.turn_off
-    entity_id: switch.living_area_al_b
+    service: input_boolean.turn_off
+    entity_id: input_boolean.living_area_al
 
 # Deployment automations
 - description: "Alternative lighting - at night, turn on living area light when occupancy detected at dining area"

@@ -16,12 +16,6 @@ switch:
   - platform: virtual
     name: '!ds1_b'
     initial_value: 'off'
-  - platform: virtual
-    name: '!kitchen_al_b'
-    initial_value: 'off'
-  - platform: virtual
-    name: '!living_room_al_b'
-    initial_value: 'off'
 
 # States:
 
@@ -31,7 +25,7 @@ input_boolean:
     initial: 'off'
     icon: mdi:lightbulb-alert
   living_room_al:
-    name: Kitchen Alternative lighting
+    name: Living Room Alternative lighting
     initial: 'off'
     icon: mdi:lightbulb-alert
 
@@ -100,36 +94,18 @@ automation:
       entity_id: binary_sensor.os2
 - trigger:
   - platform: state
-    entity_id: switch.living_room_al_b
-    to: 'on'
-  action:
-    - service: input_boolean.turn_on
-      entity_id: input_boolean.living_room_al
-    - service: switch.turn_off
-      entity_id: switch.kitchen_al_b
-- trigger:
-  - platform: state
-    entity_id: switch.living_room_al_b
-    to: 'off'
-  action:
-    service: input_boolean.turn_off
     entity_id: input_boolean.living_room_al
-- trigger:
-  - platform: state
-    entity_id: switch.kitchen_al_b
     to: 'on'
-  action:
-    - service: input_boolean.turn_on
-      entity_id: input_boolean.kitchen_al
-    - service: switch.turn_off
-      entity_id: switch.living_room_al_b
-- trigger:
-  - platform: state
-    entity_id: switch.kitchen_al_b
-    to: 'off'
   action:
     service: input_boolean.turn_off
     entity_id: input_boolean.kitchen_al
+- trigger:
+  - platform: state
+    entity_id: input_boolean.kitchen_al
+    to: 'on'
+  action:
+    service: input_boolean.turn_off
+    entity_id: input_boolean.living_room_al
 - trigger:
   - platform: state
     entity_id: switch.ds1_b
