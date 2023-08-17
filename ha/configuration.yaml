@@ -72,8 +72,6 @@ group:
       - binary_sensor.ds1
       - light.sb2
 
-# Rules:
-
 automation:
 # Automations for testing
 - trigger:
